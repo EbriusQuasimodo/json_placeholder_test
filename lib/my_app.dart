@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_task/screens/posts_page/posts_page.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -9,8 +10,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Json Placeholder',
       theme: ThemeData(
-        primaryColor: Colors.white,
+        primaryColor: Colors.white10,
+        backgroundColor: Colors.black26,
       ),
+      home: const PostsPage(),
     );
   }
 }
