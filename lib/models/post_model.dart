@@ -17,8 +17,10 @@ class PostModel {
     );
   }
 }
-class PostList{
+
+class PostList {
   final List<PostModel> posts = [];
+
   PostList.fromJson(List<dynamic> jsonItems) {
     for (var jsonItem in jsonItems) {
       posts.add(PostModel.fromJson(jsonItem));
