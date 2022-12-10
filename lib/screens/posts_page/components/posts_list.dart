@@ -68,8 +68,6 @@ class _PostsListState extends State<PostsList> {
             } else {
               return _buildPostItem(state.loadedPosts[index]);
             }
-
-            //return _buildPostItem(state.loadedPosts!.posts[index]);
           },
           itemCount: state.loadedPosts.length + 1,
         );
