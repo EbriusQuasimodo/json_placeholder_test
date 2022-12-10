@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task/bloc/post_bloc.dart';
 import 'package:test_task/models/post_model.dart';
 import 'package:test_task/resources/post_repository.dart';
+import 'package:test_task/screens/posts_page/components/bottom_loader.dart';
 
 class PostsList extends StatefulWidget {
   const PostsList({Key? key}) : super(key: key);
@@ -50,32 +51,37 @@ class _PostsListState extends State<PostsList> {
   }
 
   Widget _postBloc(BuildContext context) {
-    return BlocBuilder<PostBloc, PostState>(builder: (context, state) {
-      if (state.status == PostStatus.error) {
-        return const Text('error');
-      }
-      if (state.status == PostStatus.loading) {
+    return BlocBuilder<PostBloc, PostState>(
+      builder: (context, state) {
+        if (state.status == PostStatus.error) {
+          return const Text('error');
+        }
+        if (state.status == PostStatus.loading) {
+          return const Center(
+            child: CupertinoActivityIndicator(),
+          );
+        }
+        if (state.status == PostStatus.loaded) {
+          if (state.loadedPosts.isEmpty) {
+            return const Center(child: Text('no posts'));
+          }
+          return ListView.builder(
+            controller: _scrollController,
+            itemBuilder: (BuildContext context, int index) {
+              if (index >= state.loadedPosts.length) {
+                return const BottomLoader();
+              } else {
+                return _buildPostItem(state.loadedPosts[index]);
+              }
+            },
+            itemCount: state.loadedPosts.length + 1,
+          );
+        }
         return const Center(
-          child: CircularProgressIndicator(),
+          child: CupertinoActivityIndicator(),
         );
-      }
-      if (state.status == PostStatus.loaded) {
-        return ListView.builder(
-          controller: _scrollController,
-          itemBuilder: (BuildContext context, int index) {
-            if (index >= state.loadedPosts.length) {
-              return const CupertinoActivityIndicator();
-            } else {
-              return _buildPostItem(state.loadedPosts[index]);
-            }
-          },
-          itemCount: state.loadedPosts.length + 1,
-        );
-      }
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    });
+      },
+    );
   }
 
   Widget _buildPostItem(PostModel posts) {
