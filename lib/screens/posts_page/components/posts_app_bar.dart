@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 AppBar PostsAppBar(BuildContext context) {
   return AppBar(
     backgroundColor: Colors.white,
-    elevation: 0,
+    elevation: 0.2,
     title: const Text(
       'Posts',
       style: TextStyle(

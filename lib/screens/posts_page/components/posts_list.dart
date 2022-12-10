@@ -40,6 +40,11 @@ class _PostsListState extends State<PostsList> {
     _scrollController.dispose();
   }
 
+  void _onPostTap(int index) {
+    final id = _bloc.state.loadedPosts[index].userId;
+    Navigator.of(context).pushNamed('/comments_page', arguments: id);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,7 +76,7 @@ class _PostsListState extends State<PostsList> {
               if (index >= state.loadedPosts.length) {
                 return const BottomLoader();
               } else {
-                return _buildPostItem(state.loadedPosts[index]);
+                return _buildPostItem(state.loadedPosts[index], index);
               }
             },
             itemCount: state.loadedPosts.length + 1,
@@ -84,47 +89,50 @@ class _PostsListState extends State<PostsList> {
     );
   }
 
-  Widget _buildPostItem(PostModel posts) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+  Widget _buildPostItem(PostModel posts, int index) {
+    return GestureDetector(
+      onTap: () => _onPostTap(index),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+          borderRadius: const BorderRadius.all(
+            Radius.circular(15),
           ),
-        ],
-        borderRadius: const BorderRadius.all(
-          Radius.circular(15),
         ),
-      ),
-      margin: const EdgeInsets.only(top: 15, right: 15, left: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.only(left: 15, top: 15, right: 15),
-            child: Text(
-              posts.title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
+        margin: const EdgeInsets.only(top: 15, right: 15, left: 15),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              padding: const EdgeInsets.only(left: 15, top: 15, right: 15),
+              child: Text(
+                posts.title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
               ),
             ),
-          ),
-          Container(
-            padding:
-                const EdgeInsets.only(left: 15, top: 15, bottom: 15, right: 15),
-            child: Text(
-              posts.body,
-              style: const TextStyle(
-                color: Colors.black54,
-                fontSize: 14,
+            Container(
+              padding: const EdgeInsets.only(
+                  left: 15, top: 15, bottom: 15, right: 15),
+              child: Text(
+                posts.body,
+                style: const TextStyle(
+                  color: Colors.black54,
+                  fontSize: 14,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
