@@ -2,11 +2,13 @@ class PostModel {
   final int id;
   final String title;
   final String body;
+  final int userId;
 
   PostModel({
     required this.id,
     required this.title,
     required this.body,
+    required this.userId,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -14,16 +16,8 @@ class PostModel {
       id: json['id'],
       title: json['title'],
       body: json['body'],
+      userId: json['userId'],
     );
   }
 }
 
-class PostList {
-  final List<PostModel> posts = [];
-
-  PostList.fromJson(List<dynamic> jsonItems) {
-    for (var jsonItem in jsonItems) {
-      posts.add(PostModel.fromJson(jsonItem));
-    }
-  }
-}

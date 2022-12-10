@@ -1,4 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_task/bloc/post_bloc.dart';
+import 'package:test_task/models/post_model.dart';
+import 'package:test_task/resources/post_repository.dart';
 
 class PostsList extends StatefulWidget {
   const PostsList({Key? key}) : super(key: key);
@@ -7,20 +12,75 @@ class PostsList extends StatefulWidget {
   State<PostsList> createState() => _PostsListState();
 }
 
-final posts = List<String>.generate(30, (index) => 'post $index');
-
 class _PostsListState extends State<PostsList> {
+  PostRepository postRepository = PostRepository();
+
+  late final PostBloc _bloc = PostBloc(postRepository: postRepository)
+    ..add(GetPostEvent(shouldShowProgress: true));
+
+  final ScrollController _scrollController = ScrollController();
+
   @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 30,
-      itemBuilder: (BuildContext context, int index) {
-        return _buildPostItem(index);
+  void initState() {
+    super.initState();
+    _scrollController.addListener(
+      () {
+        if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent) {
+          _bloc.add(GetPostEvent(shouldShowProgress: false));
+        }
       },
     );
   }
 
-  Container _buildPostItem(int index) {
+  @override
+  void dispose() {
+    super.dispose();
+    _scrollController.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: BlocProvider(
+        create: (_) => _bloc,
+        child: _postBloc(context),
+      ),
+    );
+  }
+
+  Widget _postBloc(BuildContext context) {
+    return BlocBuilder<PostBloc, PostState>(builder: (context, state) {
+      if (state.status == PostStatus.error) {
+        return const Text('error');
+      }
+      if (state.status == PostStatus.loading) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+      if (state.status == PostStatus.loaded) {
+        return ListView.builder(
+          controller: _scrollController,
+          itemBuilder: (BuildContext context, int index) {
+            if (index >= state.loadedPosts.length) {
+              return const CupertinoActivityIndicator();
+            } else {
+              return _buildPostItem(state.loadedPosts[index]);
+            }
+
+            //return _buildPostItem(state.loadedPosts!.posts[index]);
+          },
+          itemCount: state.loadedPosts.length + 1,
+        );
+      }
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    });
+  }
+
+  Widget _buildPostItem(PostModel posts) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -42,7 +102,7 @@ class _PostsListState extends State<PostsList> {
           Container(
             padding: const EdgeInsets.only(left: 15, top: 15, right: 15),
             child: Text(
-              posts[index],
+              posts.title,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -52,9 +112,9 @@ class _PostsListState extends State<PostsList> {
           Container(
             padding:
                 const EdgeInsets.only(left: 15, top: 15, bottom: 15, right: 15),
-            child: const Text(
-              'asdasdasdsdasdjladhjkahfkjahfkjasdhjasueiowajdlsdka/.s,djklsasd',
-              style: TextStyle(
+            child: Text(
+              posts.body,
+              style: const TextStyle(
                 color: Colors.black54,
                 fontSize: 14,
               ),

@@ -3,16 +3,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:test_task/models/post_model.dart';
 
-const String server = 'https://jsonplaceholder.typicode.com';
+const String server = 'jsonplaceholder.typicode.com';
 
 class ApiClient {
-  Future<PostList> fetchPosts() async {
-    final url = Uri.parse('$server/posts');
-
-    final response = await http.get(url);
+  Future<List<PostModel>> fetchPosts(int page) async {
+    final response = await http.get(Uri.https(
+      'jsonplaceholder.typicode.com',
+      '/posts',
+      {'_page': '$page'},
+    ));
 
     if (response.statusCode == 200) {
-      return PostList.fromJson(json.decode(response.body));
+      final json = jsonDecode(response.body) as List;
+      return json.map<PostModel>((post) => PostModel.fromJson(post)).toList();
     } else {
       throw Exception("error");
     }
