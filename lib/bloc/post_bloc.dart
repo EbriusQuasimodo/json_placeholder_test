@@ -18,14 +18,18 @@ class PostBloc extends Bloc<PostEvent, PostState> {
             PostState.loading(currentPage: state.currentPage),
           );
         }
-        final List<PostModel> loadedPosts =
-            await postRepository.fetchAllPosts(page: state.currentPage + 1);
-        emit(
-          PostState.loaded(
-            loadedPosts: List.of(state.loadedPosts)..addAll(loadedPosts),
-            currentPage: state.currentPage + 1,
-          ),
-        );
+        try {
+          final List<PostModel> loadedPosts =
+              await postRepository.fetchAllPosts(page: state.currentPage + 1);
+          emit(
+            PostState.loaded(
+              loadedPosts: List.of(state.loadedPosts)..addAll(loadedPosts),
+              currentPage: state.currentPage + 1,
+            ),
+          );
+        } catch (_) {
+          PostState.error(currentPage: state.currentPage);
+        }
       },
     );
   }

@@ -22,9 +22,10 @@ class PostState {
           currentPage: currentPage,
         );
 
-  const PostState.loaded(
-      {required List<PostModel> loadedPosts, required int currentPage})
-      : this._(
+  const PostState.loaded({
+    required List<PostModel> loadedPosts,
+    required int currentPage,
+  }) : this._(
           status: PostStatus.loaded,
           loadedPosts: loadedPosts,
           currentPage: currentPage,
