@@ -14,7 +14,7 @@ class ApiClient {
       final json = jsonDecode(response.body) as List;
       return json.map<PostModel>((post) => PostModel.fromJson(post)).toList();
     } catch (e) {
-      throw Exception('error');
+      throw Exception('нет интернета');
     }
   }
 

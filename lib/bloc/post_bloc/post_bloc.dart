@@ -28,7 +28,9 @@ class PostBloc extends Bloc<PostEvent, PostState> {
             ),
           );
         } catch (_) {
-          PostState.error(currentPage: state.currentPage);
+          emit(
+            PostState.error(currentPage: state.currentPage),
+          );
         }
       },
     );

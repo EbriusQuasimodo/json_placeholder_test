@@ -35,7 +35,7 @@ class _CommentsListState extends State<CommentsList> {
     return BlocBuilder<CommentsBloc, CommentsState>(
       builder: (context, state) {
         if (state.status == CommentsStatus.error) {
-          return const Text('error');
+          return const Center(child: Text('комментарии не найдены((('));
         }
         if (state.status == CommentsStatus.loading) {
           return const Center(

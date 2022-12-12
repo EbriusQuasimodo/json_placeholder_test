@@ -20,15 +20,21 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
             CommentsState.loading(id: postId),
           );
         }
-        final List<CommentsModel> loadedComments =
-            await postRepository.fetchAllComments(postId: postId);
-        emit(
-          CommentsState.loaded(
-            loadedComments: List.of(state.loadedComments)
-              ..addAll(loadedComments),
-            id: postId,
-          ),
-        );
+        try {
+          final List<CommentsModel> loadedComments =
+              await postRepository.fetchAllComments(postId: postId);
+          emit(
+            CommentsState.loaded(
+              loadedComments: List.of(state.loadedComments)
+                ..addAll(loadedComments),
+              id: postId,
+            ),
+          );
+        } catch (_) {
+          emit(
+            CommentsState.error(id: postId),
+          );
+        }
       },
     );
   }

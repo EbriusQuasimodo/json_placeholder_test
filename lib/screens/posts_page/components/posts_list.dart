@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:test_task/bloc/post_bloc.dart';
+import 'package:test_task/bloc/post_bloc/post_bloc.dart';
 import 'package:test_task/models/post_model.dart';
 import 'package:test_task/resources/post_repository.dart';
 import 'package:test_task/screens/posts_page/components/bottom_loader.dart';
@@ -59,7 +59,7 @@ class _PostsListState extends State<PostsList> {
     return BlocBuilder<PostBloc, PostState>(
       builder: (context, state) {
         if (state.status == PostStatus.error) {
-          return const Text('error');
+          return const Center(child: Text('посты не найдены(('));
         }
         if (state.status == PostStatus.loading) {
           return const Center(
@@ -67,9 +67,6 @@ class _PostsListState extends State<PostsList> {
           );
         }
         if (state.status == PostStatus.loaded) {
-          if (state.loadedPosts.isEmpty) {
-            return const Center(child: Text('no posts'));
-          }
           return ListView.builder(
             controller: _scrollController,
             itemBuilder: (BuildContext context, int index) {
